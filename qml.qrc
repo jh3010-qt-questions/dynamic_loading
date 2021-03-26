@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>ComponentA.qml</file>
+        <file>ComponentAForm.ui.qml</file>
+        <file>ComponentB.qml</file>
+        <file>ComponentBForm.ui.qml</file>
+        <file>ComponentC.qml</file>
+        <file>ComponentCForm.ui.qml</file>
+    </qresource>
+    <qresource prefix="/components"/>
+
+</RCC>
