@@ -15,25 +15,48 @@ ApplicationWindow
   property var componentObject
   property var componentNames: [ "ComponentA.qml", "ComponentB.qml", "ComponentC.qml" ]
 
-  function finishCreation()
+  function generateObjects()
   {
-    console.log( "finish creation" )
-
-    if ( component.status === Component.Ready )
-    {
-      componentObject = component.createObject( contentColumn );
-
-      if ( componentObject === null )
+      function generateOneObject( name )
       {
-          // Error Handling
-          console.log("Error creating object");
+          var component
+          var componentObject
+
+          function finishCreation()
+          {
+            console.log( `finish creation ${name}` )
+
+            if ( component.status === Component.Ready )
+            {
+              componentObject = component.createObject( contentColumn );
+
+              if ( componentObject === null )
+              {
+                console.log( "Error creating object" );
+              }
+            }
+            else if ( component.status === Component.Error )
+            {
+              console.log("Error loading component:", component.errorString());
+            }
+          }
+
+          component = Qt.createComponent( `qrc:/${name}` )
+
+          if ( component.status === Component.Ready )
+          {
+              finishCreation()
+          }
+          else
+          {
+              component.statusChanged.connect( finishCreation );
+          }
       }
-    }
-    else if ( component.status === Component.Error )
-    {
-        // Error Handling
-        console.log("Error loading component:", component.errorString());
-    }
+
+      for ( var index in componentNames )
+      {
+          generateOneObject( componentNames[ index ] )
+      }
   }
 
   Connections
@@ -42,19 +65,7 @@ ApplicationWindow
 
     Component.onCompleted:
     {
-      component = Qt.createComponent( `qrc:/${componentNames[0]}` );
-
-      if ( component.status === Component.Ready )
-      {
-        console.log( "ready" )
-
-        finishCreation();
-      }
-      else
-      {
-        component.statusChanged.connect( finishCreation );
-      }
-
+      generateObjects()
 
       console.log( "completed window" )
     }
